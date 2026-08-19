@@ -2,6 +2,7 @@ import './style.css';
 import { jeju, seoul } from './photos.js';
 import { initReveal } from './reveal.js';
 import { createLightbox } from './lightbox.js';
+import { initEnvelope } from './envelope.js';
 
 // 单张图片尺寸自动交替节奏：宽 -> 常规 -> 窄 -> 常规 ...
 // 想强制某张图的尺寸，在 photos.js 里给它加 size 字段覆盖即可。
@@ -96,6 +97,7 @@ function init() {
   });
 
   initReveal();
+  initEnvelope();
 }
 
 init();

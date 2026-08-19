@@ -7,11 +7,28 @@
 //     sharp 默认就不会把 EXIF/GPS/拍摄时间写进输出文件）
 //   - 按长边等比压缩到 1200px（移动端，无后缀）和 2000px（桌面端，-2x 后缀），
 //     输出 WebP quality 80，不放大小图（withoutEnlargement）
-//   - 按原文件名排序后重新编号：jeju-01.webp / jeju-01-2x.webp ...
+//   - 按实际拍摄时间排序（用 macOS mdls 读取，相机和手机文件名不连续时
+//     文件名排序会打乱顺序；读不到拍摄时间的文件退回按文件名排）
+//     排序后重新编号：jeju-01.webp / jeju-01-2x.webp ...
 
 import { readdir, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
+
+function captureDate(filePath) {
+  try {
+    const raw = execFileSync(
+      'mdls',
+      ['-name', 'kMDItemContentCreationDate', '-raw', filePath],
+      { encoding: 'utf8' }
+    ).trim();
+    const time = Date.parse(raw);
+    return Number.isNaN(time) ? null : time;
+  } catch {
+    return null;
+  }
+}
 
 const SOURCE_ROOT = new URL('../source-images/', import.meta.url);
 const OUTPUT_ROOT = new URL('../public/images/', import.meta.url);
@@ -38,10 +55,21 @@ async function processAlbum(album) {
     throw err;
   }
 
+  const sourceDirPath = new URL(sourceDir).pathname;
   const files = entries
     .filter((e) => e.isFile() && IMAGE_EXT.has(extname(e.name).toLowerCase()))
     .map((e) => e.name)
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    .map((name) => ({
+      name,
+      date: captureDate(join(sourceDirPath, name)),
+    }))
+    .sort((a, b) => {
+      if (a.date !== null && b.date !== null) return a.date - b.date;
+      if (a.date !== null) return -1;
+      if (b.date !== null) return 1;
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    })
+    .map((f) => f.name);
 
   if (files.length === 0) {
     console.warn(`跳过：source-images/${album} 里没有图片`);

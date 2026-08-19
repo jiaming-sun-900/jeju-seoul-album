@@ -10,14 +10,23 @@
 // 加一个 size 字段覆盖默认节奏：size: 'wide' | 'regular' | 'narrow'
 
 export const jeju = [
-  // { name: 'jeju-01', caption: '' },
-  // { name: 'jeju-02', caption: '' },
-  // { pair: ['jeju-03', 'jeju-04'], caption: '' },
-  // { name: 'jeju-05', caption: '', size: 'wide' },
+  { name: 'jeju-01', caption: '' },
+  { name: 'jeju-02', caption: '' },
+  { name: 'jeju-03', caption: '' },
+  { name: 'jeju-04', caption: '' },
+  { name: 'jeju-05', caption: '' },
+  { name: 'jeju-06', caption: '' },
+  { name: 'jeju-07', caption: '' },
+  { name: 'jeju-08', caption: '' },
 ];
 
 export const seoul = [
-  // { name: 'seoul-01', caption: '' },
-  // { pair: ['seoul-02', 'seoul-03'], caption: '' },
-  // { name: 'seoul-04', caption: '' },
+  { name: 'seoul-01', caption: '' },
+  { name: 'seoul-02', caption: '' },
+  { name: 'seoul-03', caption: '' },
+  { name: 'seoul-04', caption: '' },
+  { name: 'seoul-05', caption: '' },
+  { name: 'seoul-06', caption: '' },
+  { name: 'seoul-07', caption: '' },
+  { name: 'seoul-08', caption: '' },
 ];

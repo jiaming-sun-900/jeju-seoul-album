@@ -83,7 +83,7 @@ img {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 16%;
+  padding-bottom: 10%;
   border: var(--envelope-stroke) solid var(--color-text);
   background: var(--color-bg);
   z-index: 1;

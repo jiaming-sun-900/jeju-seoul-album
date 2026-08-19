@@ -46,21 +46,35 @@ img {
 }
 
 /* 信封开场 */
+:root {
+  --envelope-stroke: 3.5px;
+}
+
 .envelope-screen {
   perspective: 1400px;
 }
 
 .envelope {
   position: relative;
-  width: min(320px, 72vw);
+  width: min(380px, 78vw);
   aspect-ratio: 3 / 2;
   cursor: pointer;
   transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
+}
+
+.envelope:hover {
+  transform: translateY(-3px);
+}
+
+.envelope:active {
+  transform: scale(0.96);
+  transition-duration: 0.1s;
 }
 
 .envelope:focus-visible {
   outline: 1px solid var(--color-text);
-  outline-offset: 8px;
+  outline-offset: 10px;
 }
 
 .envelope-body {
@@ -70,7 +84,7 @@ img {
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 16%;
-  border: 1px solid var(--color-text);
+  border: var(--envelope-stroke) solid var(--color-text);
   background: var(--color-bg);
   z-index: 1;
 }
@@ -79,20 +93,16 @@ img {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 500;
-  font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
   letter-spacing: 0.03em;
 }
 
 .envelope-flap {
   position: absolute;
-  top: -1px;
-  left: -1px;
-  right: -1px;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 56%;
-  background: var(--color-bg);
-  border: 1px solid var(--color-text);
-  border-bottom: none;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
   transform-origin: top center;
   transform: rotateX(0deg);
   transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
@@ -100,13 +110,38 @@ img {
   z-index: 2;
 }
 
+/* 折线用两根旋转的等宽线段拼出（而不是 clip-path 三角形——
+   clip-path 只是遮罩，不会描边，而且两层不同尺寸的三角形斜边
+   宽度也无法保持一致）。信封宽高比固定为 3:2、flap 高度固定为
+   56%，所以旋转角度和线长是与容器尺寸无关的常量，能在任意屏幕
+   宽度下精确对到左右角与顶点。 */
+.envelope-flap-line {
+  position: absolute;
+  top: 0;
+  width: 62.4%;
+  height: var(--envelope-stroke);
+  background: var(--color-text);
+}
+
+.envelope-flap-line-left {
+  left: 0;
+  transform-origin: 0% 50%;
+  transform: rotate(36.76deg);
+}
+
+.envelope-flap-line-right {
+  right: 0;
+  transform-origin: 100% 50%;
+  transform: rotate(-36.76deg);
+}
+
 .envelope.is-open .envelope-flap {
   transform: rotateX(180deg);
 }
 
 .envelope-hint {
-  margin-top: 2.2rem;
-  font-size: 0.8rem;
+  margin-top: 2.4rem;
+  font-size: 1rem;
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
   transition: opacity 0.4s ease-out;
@@ -117,8 +152,14 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .envelope,
   .envelope-flap {
     transition: opacity 0.3s ease-out;
+  }
+
+  .envelope:hover,
+  .envelope:active {
+    transform: none;
   }
 
   .envelope.is-open .envelope-flap {
